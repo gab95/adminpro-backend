@@ -5,10 +5,16 @@ const Usuario = require("../models/usuario");
 const { generarJWT } = require("../helpers/jwt");
 
 exports.getUsuarios = async (req, res, next) => {
-  const usuarios = await Usuario.find({}, "nombre email role google");
+  const desde = +req.query.desde || 0;
+
+  const [usuarios, totalRegistros] = await Promise.all([
+    Usuario.find({}, "nombre email role google img").skip(desde).limit(5),
+    Usuario.estimatedDocumentCount(),
+  ]);
 
   return res.json({
     ok: true,
+    totalRegistros,
     usuarios,
     uid: req.uid,
   });
