@@ -17,4 +17,13 @@ router.post(
   authController.login
 );
 
+router.post(
+  "/google",
+  [
+    check("token", "El token de Google es obligatorio").not().isEmpty(),
+    validarCampo,
+  ],
+  authController.googleSignIn
+);
+
 module.exports = router;
