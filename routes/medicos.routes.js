@@ -24,8 +24,14 @@ router
 
 router
   .route("/:id")
-  .get([], medicosController.getMedicoById)
-  .put([], medicosController.actualizarMedico)
-  .delete([], medicosController.borrarMedicos);
+  .put(
+    [
+      check("nombre", "El nombre es obligatorio").not().isEmpty(),
+      check("hospital", "El hospital id debe de ser válido").isMongoId(),
+      validarCampo,
+    ],
+    medicosController.actualizarMedico
+  )
+  .delete(medicosController.borrarMedicos);
 
 module.exports = router;

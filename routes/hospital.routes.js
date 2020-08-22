@@ -20,8 +20,10 @@ router
 
 router
   .route("/:id")
-  .get([], hopitalesController.getHospitalById)
-  .put([], hopitalesController.actualizarHospital)
-  .delete([], hopitalesController.borrarHospitales);
+  .put(
+    [check("nombre", "El nombre es obligatorio").not().isEmpty(), validarCampo],
+    hopitalesController.actualizarHospital
+  )
+  .delete(hopitalesController.borrarHospitales);
 
 module.exports = router;

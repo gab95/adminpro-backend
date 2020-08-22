@@ -19,13 +19,6 @@ exports.getHospitales = async (req, res = response, next) => {
   }
 };
 
-exports.getHospitalById = (req, res = response, next) => {
-  return res.status(200).json({
-    ok: true,
-    msg: "get hospital by id",
-  });
-};
-
 exports.crearHospital = async (req, res = response, next) => {
   try {
     req.body.usuario = req.uid;
@@ -48,18 +41,64 @@ exports.crearHospital = async (req, res = response, next) => {
   }
 };
 
-exports.actualizarHospital = (req, res = response, next) => {
-  return res.status(200).json({
-    ok: true,
-    msg: "actualizar hospital",
-  });
+exports.actualizarHospital = async (req, res = response, next) => {
+  const id = req.params.id;
+  try {
+    const hospital = await Hospital.findById(id);
+
+    if (!hospital) {
+      return res.status(500).json({
+        ok: false,
+        msg: "No existe hospital con ese id",
+      });
+    }
+
+    const cambiosHopital = { ...req.body, usuario: req.uid };
+
+    const hospitalActualizado = await Hospital.findByIdAndUpdate(
+      id,
+      cambiosHopital,
+      {
+        new: true,
+      }
+    );
+
+    return res.status(200).json({
+      ok: true,
+      hospitalActualizado,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error inesperado... Revisar logs",
+    });
+  }
 };
 
-exports.borrarHospitales = (req, res = response, next) => {
-  return res.status(200).json({
-    ok: true,
-    msg: "borrar hospital",
-  });
-};
+exports.borrarHospitales = async (req, res = response, next) => {
+  const id = req.params.id;
+  try {
+    const hospital = await Hospital.findById(id);
 
-//6. crear medicos
+    if (!hospital) {
+      return res.status(500).json({
+        ok: false,
+        msg: "No existe hospital con ese id",
+      });
+    }
+
+    await Hospital.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      ok: true,
+      msg: "Hospital eliminado",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error inesperado... Revisar logs",
+    });
+  }
+};
