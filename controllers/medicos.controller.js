@@ -21,11 +21,31 @@ exports.getMedicos = async (req, res = response, next) => {
   }
 };
 
-exports.getMedicoById = (req, res = response, next) => {
-  return res.status(200).json({
-    ok: true,
-    msg: "get Medico by id",
-  });
+exports.getMedicoById = async (req, res = response, next) => {
+  const id = req.params.id;
+  try {
+    const medico = await Medico.findById(id)
+      .populate("usuario", "nombre img")
+      .populate("hospital", "nombre img");
+
+    if (!medico) {
+      return res.status(500).json({
+        ok: false,
+        msg: "No existe medico con ese id",
+      });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      medico,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error inesperado... Revisar logs",
+    });
+  }
 };
 
 exports.crearMedico = async (req, res = response, next) => {

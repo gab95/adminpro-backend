@@ -80,7 +80,14 @@ exports.actualizarUsuario = async (req, res = response, next) => {
       }
     }
 
-    campos.email = email;
+    if (!usuarioDB.google) {
+      campos.email = email;
+    } else if (usuarioDB.email !== email) {
+      return res.status(400).json({
+        ok: false,
+        msg: "Usuario de Google no pueden cambiar email",
+      });
+    }
 
     const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, {
       new: true,

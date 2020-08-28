@@ -24,6 +24,7 @@ router
 
 router
   .route("/:id")
+  .get(medicosController.getMedicoById)
   .put(
     [
       check("nombre", "El nombre es obligatorio").not().isEmpty(),

@@ -8,11 +8,11 @@ const { validarJWT } = require("../middlewares/validar-jwt");
 
 const router = Router();
 
-router.use(validarJWT);
+// router.use(validarJWT);
 
 router
   .route("/")
-  .get(usuariosController.getUsuarios)
+  .get(validarJWT, usuariosController.getUsuarios)
   .post(
     [
       check("nombre", "El nombre es obligatorio").not().isEmpty(),
@@ -27,6 +27,7 @@ router
   .route("/:id")
   .put(
     [
+      validarJWT,
       check("nombre", "El nombre es obligatorio").not().isEmpty(),
       check("email", "El email es obligatorio").isEmail(),
       check("role", "El rol es obligatorio").not().isEmpty(),
@@ -34,6 +35,6 @@ router
     ],
     usuariosController.actualizarUsuario
   )
-  .delete(usuariosController.borrarUsuario);
+  .delete(validarJWT, usuariosController.borrarUsuario);
 
 module.exports = router;
