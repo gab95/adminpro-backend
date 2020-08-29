@@ -4,6 +4,7 @@ const { response } = require("express");
 const Usuario = require("../models/usuario");
 const { generarJWT } = require("../helpers/jwt");
 const { googleVerify } = require("../helpers/google-verify");
+const { getMenuFrontend } = require("../helpers/menu-frontend");
 
 exports.login = async (req, res = response, next) => {
   const { email, password } = req.body;
@@ -31,6 +32,7 @@ exports.login = async (req, res = response, next) => {
     return res.status(200).json({
       ok: true,
       token,
+      menu: getMenuFrontend(usuarioDB.role),
     });
   } catch (error) {
     console.log(error);
@@ -72,6 +74,7 @@ exports.googleSignIn = async (req, res = response, next) => {
     return res.status(200).json({
       ok: true,
       token,
+      menu: getMenuFrontend(usuario.role),
     });
   } catch (error) {
     console.log(error);
@@ -100,6 +103,7 @@ exports.renewToken = async (req, res = response, next) => {
       ok: true,
       token,
       usuario,
+      menu: getMenuFrontend(usuario.role),
     });
   } catch (error) {
     console.log(error);
